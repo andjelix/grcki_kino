@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">grcki_kino</string>
+    <string name="vreme_izvlacenja">Vreme izvlacenja</string>
+    <string name="preostalo_za_uplatu">Preostalo za uplatu</string>
 </resources>
