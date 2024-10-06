@@ -1,5 +1,6 @@
 package com.example.grcki_kino.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,13 +24,17 @@ class RoundViewModel(private val apiService: ApiService) : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = apiService.getRounds(gameId)
-                _roundsData.value = response
+                _roundsData.postValue(response)
+                Log.d("RoundViewModel", "Fetched new rounds data: $response")
             } catch (e: IOException) {
                 _error.value = "Network Error"
+                Log.e("RoundViewModel", "Network Error: ${e.message}")
             } catch (e: HttpException) {
                 _error.value = "HTTP Error: ${e.code()}"
+                Log.e("RoundViewModel", "HTTP Error: ${e.code()}")
             } catch (e: JsonSyntaxException) {
                 _error.value = "Data Parsing Error: ${e.message}"
+                Log.e("RoundViewModel", "Data Parsing Error: ${e.message}")
             }
         }
     }
@@ -42,7 +47,7 @@ class RoundViewModel(private val apiService: ApiService) : ViewModel() {
             try {
                 // Call the updated API method
                 val response = apiService.getRound(gameId, drawId)
-                _roundData.value = response // Update with the response
+                _roundData.postValue(response)
             } catch (e: IOException) {
                 _error.value = "Network Error"
             } catch (e: HttpException) {

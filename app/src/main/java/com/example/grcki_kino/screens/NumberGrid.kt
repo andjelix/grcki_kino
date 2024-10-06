@@ -1,3 +1,5 @@
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,26 +21,42 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.grcki_kino.utils.GameConstants
 import com.example.grcki_kino.utils.TimeUtils
+import com.example.grcki_kino.utils.TimeUtils.Stopwatch
 import com.example.grcki_kino.viewmodel.RoundViewModel
 
 @Composable
-fun NumberGrid(numbers: List<Int>, drawId: Int, maxSelection: Int = 15, viewModel: RoundViewModel) {
+fun NumberGrid(
+    context: Context,
+    numbers: List<Int>,
+    drawId: Int,
+    maxSelection: Int = 15,
+    viewModel: RoundViewModel
+) {
 
     val roundData by viewModel.roundData.observeAsState()
 
     viewModel.fetchRound(GameConstants.GAME_ID, drawId)
 
-
     var selectedNumbers by remember { mutableStateOf(setOf<Int>()) }
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
 
         val drawingTime =
             roundData?.drawTime?.let { TimeUtils.parseTimestampToTime(it) }
 
-        val numberOfRound =roundData?.drawId
+        val numberOfRound = roundData?.drawId
+
+        var remainingTime by remember { mutableStateOf("XX:XX") }
+
+        roundData?.let {
+            Stopwatch(it, onTimeUpdate = { timeDisplay ->
+                remainingTime = timeDisplay
+            })
+        }
 
         Text(
             text = "Vreme izvlacenja: $drawingTime",
@@ -48,6 +66,12 @@ fun NumberGrid(numbers: List<Int>, drawId: Int, maxSelection: Int = 15, viewMode
 
         Text(
             text = "Broj kola: $numberOfRound",
+            style = MaterialTheme.typography.bodyLarge, // Adjust style as needed
+            modifier = Modifier.padding(bottom = 16.dp) // Spacing below the text
+        )
+
+        Text(
+            text = "Preostalo vreme za uplatu: $remainingTime",
             style = MaterialTheme.typography.bodyLarge, // Adjust style as needed
             modifier = Modifier.padding(bottom = 16.dp) // Spacing below the text
         )
@@ -64,6 +88,12 @@ fun NumberGrid(numbers: List<Int>, drawId: Int, maxSelection: Int = 15, viewMode
                     number = number,
                     isSelected = selectedNumbers.contains(number),
                     onClick = {
+                        if (remainingTime == "00:00") {
+                            showToast(
+                                context,
+                                "Time is up, you can't choose numbers! Select another round!"
+                            )
+                        }
                         if (selectedNumbers.contains(number)) {
                             // Deselect the number
                             selectedNumbers -= number
@@ -74,7 +104,7 @@ fun NumberGrid(numbers: List<Int>, drawId: Int, maxSelection: Int = 15, viewMode
                     },
                     isClickable = selectedNumbers.size < maxSelection || selectedNumbers.contains(
                         number
-                    )
+                    ) && remainingTime != "00:00"
                 )
             }
         }
@@ -127,6 +157,10 @@ fun NumberCard(number: Int, isSelected: Boolean, onClick: () -> Unit, isClickabl
             )
         }
     }
+}
+
+fun showToast(context: Context, message: String) {
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
 
 @Preview(showBackground = true)

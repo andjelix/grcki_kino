@@ -3,6 +3,7 @@ package com.example.grcki_kino.utils
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -16,7 +17,7 @@ import java.util.TimeZone
 
 object TimeUtils {
 
-    private fun calculateRemainingTimeInSeconds(targetTime: Long): Int {
+    fun calculateRemainingTimeInSeconds(targetTime: Long): Int {
         val currentTime = java.util.Date().time
         val difference = targetTime - currentTime
         return if (difference > 0) {
@@ -27,25 +28,25 @@ object TimeUtils {
     }
 
     @Composable
-    fun Stopwatch(roundDataClass: RoundDataClass, onTimeUpdate: (String) -> Unit) {
+    fun Stopwatch(
+        roundDataClass: RoundDataClass,
+        onTimeUpdate: (String) -> Unit)
+    {
         val targetTime = roundDataClass.drawTime
-        var remainingTimeInSeconds by remember { mutableStateOf(calculateRemainingTimeInSeconds(targetTime)) }
+        var remainingTimeInSeconds by remember {
+            mutableIntStateOf(calculateRemainingTimeInSeconds(targetTime))
+        }
 
+        // Update the countdown timer
         LaunchedEffect(roundDataClass.drawId) {
-            if (remainingTimeInSeconds > 0) {
-                // Start a coroutine to update remaining time
-                while (remainingTimeInSeconds > 0) {
-                    delay(1000) // Update every second
-                    remainingTimeInSeconds = calculateRemainingTimeInSeconds(targetTime)
+            while (remainingTimeInSeconds > 0) {
+                delay(1000)
+                remainingTimeInSeconds = calculateRemainingTimeInSeconds(targetTime)
 
-                    // Update formatted time display
-                    val minutes = remainingTimeInSeconds / 60
-                    val seconds = remainingTimeInSeconds % 60
-                    val timeDisplay = String.format("%02d:%02d", minutes, seconds)
-                    onTimeUpdate(timeDisplay)
-                }
-            } else {
-                onTimeUpdate("00:00")
+                val minutes = remainingTimeInSeconds / 60
+                val seconds = remainingTimeInSeconds % 60
+                val timeDisplay = String.format("%02d:%02d", minutes, seconds)
+                onTimeUpdate(timeDisplay)
             }
         }
     }

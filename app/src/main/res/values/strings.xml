@@ -2,4 +2,6 @@
     <string name="app_name">grcki_kino</string>
     <string name="vreme_izvlacenja">Vreme izvlacenja</string>
     <string name="preostalo_za_uplatu">Preostalo za uplatu</string>
+    <string name="izvlacenje_uzivo">Izvlacenje uzivo</string>
+    <string name="rezultati_izvlacenja">Rezultati izvlacenja</string>
 </resources>
