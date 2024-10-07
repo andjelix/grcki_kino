@@ -149,8 +149,10 @@ fun RoundTable(
 }
 
 @Composable
-fun RoundData(viewModel: RoundViewModel, onRoundClicked: (RoundDataClass) -> Unit,
-              onClickAnimation: () -> Unit, onAnotherButtonClick: () -> Unit) {
+fun RoundData(
+    viewModel: RoundViewModel, onRoundClicked: (RoundDataClass) -> Unit,
+    onClickAnimation: () -> Unit, onAnotherButtonClick: () -> Unit
+) {
     val roundsData by viewModel.roundsData.observeAsState(emptyList())
     val errorMessage by viewModel.error.observeAsState()
 
@@ -173,8 +175,8 @@ fun RoundData(viewModel: RoundViewModel, onRoundClicked: (RoundDataClass) -> Uni
             RoundTable(
                 roundList = roundsData,
                 onRowClick = { selectedRound -> onRoundClicked(selectedRound) },
-                onLiveDrawingClicked = {onClickAnimation()},
-                onShowRoundsResultsClicked = {onAnotherButtonClick()}
+                onLiveDrawingClicked = { onClickAnimation() },
+                onShowRoundsResultsClicked = { onAnotherButtonClick() }
             )
 
         }

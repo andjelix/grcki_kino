@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.example.grcki_kino.data.RoundDataClass
@@ -30,8 +29,8 @@ object TimeUtils {
     @Composable
     fun Stopwatch(
         roundDataClass: RoundDataClass,
-        onTimeUpdate: (String) -> Unit)
-    {
+        onTimeUpdate: (String) -> Unit
+    ) {
         val targetTime = roundDataClass.drawTime
         var remainingTimeInSeconds by remember {
             mutableIntStateOf(calculateRemainingTimeInSeconds(targetTime))

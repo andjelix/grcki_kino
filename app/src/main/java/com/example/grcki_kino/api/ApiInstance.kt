@@ -14,10 +14,9 @@ class ApiInstance {
                 .addConverterFactory(GsonConverterFactory.create())
     }
 
-    private val retrofit:Retrofit = retrofitBuilder.build()
+    private val retrofit: Retrofit = retrofitBuilder.build()
 
-    private val httpClient: OkHttpClient.Builder
-            = OkHttpClient.Builder()
+    private val httpClient: OkHttpClient.Builder = OkHttpClient.Builder()
 
     fun <T> createService(serviceClass: Class<T>): T {
         return retrofit.create(serviceClass)
