@@ -1,6 +1,7 @@
 package com.example.grcki_kino.api
 
 import com.example.grcki_kino.api.RetrofitBuilder.BASE_URL
+import com.example.grcki_kino.data.GameResponse
 import com.example.grcki_kino.data.RoundDataClass
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -15,4 +16,12 @@ interface ApiService {
         @Path("gameId") gameId: Int,
         @Path("drawId") drawId: Int
     ): RoundDataClass
+
+
+    @GET("draws/v3.0/{gameId}/draw-date/{fromDate}/{toDate}")
+    suspend fun getDrawingResults(
+        @Path("gameId") gameId: Int,
+        @Path("fromDate") fromDate: String,
+        @Path("toDate") toDate: String
+    ): GameResponse
 }

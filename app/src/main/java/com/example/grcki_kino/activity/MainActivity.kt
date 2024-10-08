@@ -15,6 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.grcki_kino.api.RetrofitBuilder
 import com.example.grcki_kino.screens.RoundData
+import com.example.grcki_kino.screens.WinningNumbersScreen
 import com.example.grcki_kino.viewmodel.RoundViewModel
 import com.example.grcki_kino.viewmodel.RoundViewModelFactory
 
@@ -38,14 +39,12 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate("numberGrid/${selectedRound.drawId}")
                                 },
                                 onClickAnimation = {
-                                    // Start your WebViewActivity or perform the desired action
                                     val intent =
                                         Intent(applicationContext, WebViewActivity::class.java)
                                     startActivity(intent)
                                 },
-                                onAnotherButtonClick = {
-                                    // Handle another button click
-                                    // You can navigate to another screen or perform other actions here
+                                onShowRoundsResultsClicked = {
+                                    navController.navigate("winningNumbers")
                                 }
                             )
                         }
@@ -60,6 +59,9 @@ class MainActivity : ComponentActivity() {
                                 drawId = drawId,
                                 viewModel = viewModel
                             )
+                        }
+                        composable("winningNumbers") {
+                            WinningNumbersScreen(viewModel = viewModel)
                         }
                     }
                 }

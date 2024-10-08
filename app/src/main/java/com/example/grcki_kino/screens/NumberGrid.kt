@@ -29,7 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.grcki_kino.utils.GameConstants
 import com.example.grcki_kino.utils.TimeUtils
@@ -45,7 +44,6 @@ fun NumberGrid(
     maxSelection: Int = 15,
     viewModel: RoundViewModel
 ) {
-
     val roundData by viewModel.roundData.observeAsState()
 
     viewModel.fetchRound(GameConstants.GAME_ID, drawId)
@@ -57,10 +55,7 @@ fun NumberGrid(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-
-        val drawingTime =
-            roundData?.drawTime?.let { TimeUtils.parseTimestampToTime(it) }
-
+        val drawingTime = roundData?.drawTime?.let { TimeUtils.parseTimestampToTime(it) }
         val numberOfRound = roundData?.drawId
 
         var remainingTime by remember { mutableStateOf("XX:XX") }
@@ -73,30 +68,29 @@ fun NumberGrid(
 
         Text(
             text = "Vreme izvlacenja: $drawingTime",
-            style = MaterialTheme.typography.bodyLarge, // Adjust style as needed
-            modifier = Modifier.padding(bottom = 16.dp) // Spacing below the text
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(bottom = 16.dp)
         )
 
         Text(
             text = "Broj kola: $numberOfRound",
-            style = MaterialTheme.typography.bodyLarge, // Adjust style as needed
-            modifier = Modifier.padding(bottom = 16.dp) // Spacing below the text
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(bottom = 16.dp)
         )
 
         Text(
             text = "Preostalo vreme za uplatu: $remainingTime",
-            style = MaterialTheme.typography.bodyLarge, // Adjust style as needed
-            modifier = Modifier.padding(bottom = 16.dp) // Spacing below the text
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(bottom = 16.dp)
         )
-
 
         // LazyVerticalGrid for numbers
         LazyVerticalGrid(
-            columns = GridCells.Fixed(5),
+            columns = GridCells.Fixed(8),
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(4.dp)
         ) {
-            items(numbers) { number ->
+            items(numbers, key = { it }) { number ->
                 NumberCard(
                     number = number,
                     isSelected = selectedNumbers.contains(number),
@@ -124,7 +118,6 @@ fun NumberGrid(
     }
 }
 
-
 @Composable
 fun NumberCard(number: Int, isSelected: Boolean, onClick: () -> Unit, isClickable: Boolean) {
     val circleRadius = remember { Animatable(0f) }
@@ -132,28 +125,28 @@ fun NumberCard(number: Int, isSelected: Boolean, onClick: () -> Unit, isClickabl
 
     Card(
         modifier = Modifier
-            .padding(8.dp)
-            .size(50.dp)
-            .clickable(enabled = isClickable) {
-                if (!isSelected) {
-                    coroutineScope.launch {
-                        circleRadius.animateTo(
-                            targetValue = 40f,
-                            animationSpec = tween(durationMillis = 300)
-                        )
-                    }
-                }
-                onClick() // Call the onClick function to update selection
-            },
+            .padding(4.dp) // Reduced padding to fit more numbers
+            .size(50.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
         shape = MaterialTheme.shapes.small,
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable(enabled = isClickable) {
+                    if (!isSelected) {
+                        coroutineScope.launch {
+                            circleRadius.animateTo(
+                                targetValue = 40f,
+                                animationSpec = tween(durationMillis = 300)
+                            )
+                        }
+                    }
+                    onClick()
+                },
             contentAlignment = Alignment.Center
         ) {
-            // Draw the animated circle behind the text if selected
             Canvas(modifier = Modifier.fillMaxSize()) {
                 if (isSelected) {
                     drawCircle(
@@ -174,12 +167,4 @@ fun NumberCard(number: Int, isSelected: Boolean, onClick: () -> Unit, isClickabl
 
 fun showToast(context: Context, message: String) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewNumberGrid() {
-    MaterialTheme {
-        //NumberGrid(numbers = (1..80).toList(), drawId = 157, viewModel = null)
-    }
 }

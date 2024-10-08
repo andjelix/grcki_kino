@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.grcki_kino.api.ApiService
+import com.example.grcki_kino.data.GameResponse
 import com.example.grcki_kino.data.RoundDataClass
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.launch
@@ -45,9 +46,28 @@ class RoundViewModel(private val apiService: ApiService) : ViewModel() {
     fun fetchRound(gameId: Int, drawId: Int) {
         viewModelScope.launch {
             try {
-                // Call the updated API method
                 val response = apiService.getRound(gameId, drawId)
                 _roundData.postValue(response)
+            } catch (e: IOException) {
+                _error.value = "Network Error"
+            } catch (e: HttpException) {
+                _error.value = "HTTP Error: ${e.code()}"
+            } catch (e: JsonSyntaxException) {
+                _error.value = "Data Parsing Error: ${e.message}"
+            }
+        }
+    }
+
+    private val _drawingResults = MutableLiveData<GameResponse>()
+    val drawingResults: LiveData<GameResponse> get() = _drawingResults
+
+
+    fun fetchDrawingResults(gameId: Int, fromDate: String, toDate: String) {
+        viewModelScope.launch {
+            try {
+                val response = apiService.getDrawingResults(gameId, fromDate, toDate)
+                println("XXX $response")
+                _drawingResults.postValue(response)
             } catch (e: IOException) {
                 _error.value = "Network Error"
             } catch (e: HttpException) {
