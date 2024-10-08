@@ -16,7 +16,7 @@ import java.util.TimeZone
 
 object TimeUtils {
 
-    fun calculateRemainingTimeInSeconds(targetTime: Long): Int {
+    private fun calculateRemainingTimeInSeconds(targetTime: Long): Int {
         val currentTime = java.util.Date().time
         val difference = targetTime - currentTime
         return if (difference > 0) {
@@ -29,7 +29,8 @@ object TimeUtils {
     @Composable
     fun Stopwatch(
         roundDataClass: RoundDataClass,
-        onTimeUpdate: (String) -> Unit
+        onTimeUpdate: (String) -> Unit,
+        onTimeUp: () -> Unit
     ) {
         val targetTime = roundDataClass.drawTime
         var remainingTimeInSeconds by remember {
@@ -47,6 +48,9 @@ object TimeUtils {
                 val timeDisplay = String.format("%02d:%02d", minutes, seconds)
                 onTimeUpdate(timeDisplay)
             }
+
+            delay(1500)
+            onTimeUp()
         }
     }
 

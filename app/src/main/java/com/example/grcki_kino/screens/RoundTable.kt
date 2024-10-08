@@ -41,6 +41,7 @@ import com.example.grcki_kino.viewmodel.RoundViewModel
 
 @Composable
 fun RoundTable(
+    viewModel: RoundViewModel,
     roundList: List<RoundDataClass>,
     onRowClick: (RoundDataClass) -> Unit,
     onLiveDrawingClicked: () -> Unit,
@@ -122,10 +123,12 @@ fun RoundTable(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                var formattedTime by remember { mutableStateOf("XX:XX") }
+                var formattedTime by remember { mutableStateOf("00:00") }
 
                 Stopwatch(round, onTimeUpdate = { timeDisplay ->
                     formattedTime = timeDisplay
+                }, onTimeUp = {
+                    viewModel.fetchRounds(GameConstants.GAME_ID)
                 })
 
                 Box(
@@ -173,6 +176,7 @@ fun RoundData(
             CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
         } else {
             RoundTable(
+                viewModel,
                 roundList = roundsData,
                 onRowClick = { selectedRound -> onRoundClicked(selectedRound) },
                 onLiveDrawingClicked = { onClickAnimation() },

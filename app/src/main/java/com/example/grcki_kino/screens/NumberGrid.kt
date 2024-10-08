@@ -58,11 +58,13 @@ fun NumberGrid(
         val drawingTime = roundData?.drawTime?.let { TimeUtils.parseTimestampToTime(it) }
         val numberOfRound = roundData?.drawId
 
-        var remainingTime by remember { mutableStateOf("XX:XX") }
+        var remainingTime by remember { mutableStateOf("00:00") }
 
         roundData?.let {
             Stopwatch(it, onTimeUpdate = { timeDisplay ->
                 remainingTime = timeDisplay
+            }, onTimeUp = {
+                showToast(context,"Time is up! Choose anoother round.")
             })
         }
 
